@@ -1,0 +1,46 @@
+### Get Most Popular Make
+GET http://localhost:3000/api/mostPopularMake
+Content-Type: application/json
+
+
+### Add a New Car
+POST http://localhost:3000/api/car
+Content-Type: application/json
+
+{
+  "color": "blue",
+  "make": "Toyota",
+  "model": "Corolla",
+  "reg_number": "CA 12345"
+}
+
+
+### Get Car by Registration Number
+GET http://localhost:3000/api/car/84928 GP
+Content-Type: application/json
+
+
+
+
+### Update Car by Registration Number
+PUT http://localhost:3000/api/car/CL 12345
+Content-Type: application/json
+
+{
+  "color": "red",
+  "make": "Toyota",
+  "model": "Corolla",
+  "reg_number": "CA 12345"
+}
+
+
+{
+  "color": "red",
+  "make": "Toyota",
+  "model": "Corolla",
+  "reg_number": "CA 12345"
+}
+
+### Delete Car by Registration Number
+DELETE http://localhost:3000/api/car/CL 12345
+Content-Type: application/json

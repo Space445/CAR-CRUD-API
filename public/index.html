@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Car CRUD API</title>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@2.8.2/dist/alpine.min.js" defer></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+</head>
+<body>
+    <div x-data="carCrudApp()">
+        <h1>Car CRUD API</h1>
+
+        <div>
+            <h2>Add a New Car</h2>
+            <input x-model="newCar.color" placeholder="Color">
+            <input x-model="newCar.make" placeholder="Make">
+            <input x-model="newCar.model" placeholder="Model">
+            <input x-model="newCar.reg_number" placeholder="Registration Number">
+            <button @click="addCar()">Add Car</button>
+        </div>
+
+        <div>
+            <h2>Get Car by Registration Number</h2>
+            <input x-model="searchRegNumber" placeholder="Registration Number">
+            <button @click="getCar()">Get Car</button>
+            <pre x-text="carData ? JSON.stringify(carData, null, 2) : 'No data found'"></pre>
+        </div>
+
+        <div>
+            <h2>Update Car by Registration Number</h2>
+            <input x-model="updateCar.reg_number" placeholder="Registration Number">
+            <input x-model="updateCar.color" placeholder="Color">
+            <input x-model="updateCar.make" placeholder="Make">
+            <input x-model="updateCar.model" placeholder="Model">
+            <button @click="updateCarData()">Update Car</button>
+        </div>
+
+        <div>
+            <h2>Delete Car by Registration Number</h2>
+            <input x-model="deleteRegNumber" placeholder="Registration Number">
+            <button @click="deleteCar()">Delete Car</button>
+        </div>
+
+        <div>
+            <h2>Most Popular Car Make</h2>
+            <button @click="getMostPopularMake()">Get Most Popular Make</button>
+            <p x-text="mostPopularMake"></p>
+        </div>
+
+        <div>
+            <h2>All Cars</h2>
+            <button @click="getAllCars()">Get All Cars</button>
+            <ul>
+                <template x-for="car in cars" :key="car.reg_number">
+                    <li x-text="`${car.reg_number} - ${car.make} ${car.model} (${car.color})`"></li>
+                </template>
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        function carCrudApp() {
+            return {
+                newCar: {
+                    color: '',
+                    make: '',
+                    model: '',
+                    reg_number: ''
+                },
+                searchRegNumber: '',
+                carData: null,
+                updateCar: {
+                    reg_number: '',
+                    color: '',
+                    make: '',
+                    model: ''
+                },
+                deleteRegNumber: '',
+                mostPopularMake: '',
+                cars: [],
+                async addCar() {
+                    try {
+                        const response = await axios.post('http://localhost:3000/api/car', this.newCar);
+                        alert('Car added successfully');
+                        this.getAllCars(); // Refresh the list of cars
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error adding car');
+                    }
+                },
+                async getCar() {
+                    try {
+                        const response = await axios.get(`http://localhost:3000/api/car/${encodeURIComponent(this.searchRegNumber)}`);
+                        this.carData = response.data;
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error fetching car');
+                    }
+                },
+                async updateCarData() {
+                    try {
+                        const response = await axios.put(`http://localhost:3000/api/car/${encodeURIComponent(this.updateCar.reg_number)}`, this.updateCar);
+                        alert('Car updated successfully');
+                        this.getAllCars(); // Refresh the list of cars
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error updating car');
+                    }
+                },
+                async deleteCar() {
+                    try {
+                        const response = await axios.delete(`http://localhost:3000/api/car/${encodeURIComponent(this.deleteRegNumber)}`);
+                        alert('Car deleted successfully');
+                        this.getAllCars(); // Refresh the list of cars
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error deleting car');
+                    }
+                },
+                async getMostPopularMake() {
+                    try {
+                        const response = await axios.get('http://localhost:3000/api/mostPopularMake');
+                        this.mostPopularMake = response.data.make;
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error fetching most popular make');
+                    }
+                },
+                async getAllCars() {
+                    try {
+                        const response = await axios.get('http://localhost:3000/api/cars');
+                        this.cars = response.data;
+                    } catch (error) {
+                        console.error(error);
+                        alert('Error fetching cars');
+                    }
+                }
+            };
+        }
+    </script>
+</body>
+</html>
